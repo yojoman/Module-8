@@ -4,7 +4,7 @@ const searchPage = require("../pages/search.page");
 const resources = require("../resources/data.js");
 const { expect, assert } = require("chai");
 
-describe("Onliner.by test example", () => {
+describe("Onliner.by", () => {
   before(async () => {
     await browser.maximizeWindow();
   });
@@ -52,33 +52,35 @@ describe("Onliner.by test example", () => {
     expect(await productPage.productImage.isDisplayed()).to.equal(true);
   });
 
-  it("Should click on Ostavit Otziv button by using actionsPerform", async () => {
-    const getButtonOstavitOtzyv = $(".//a[contains(text(),'Оставить отзыв')]");
-    browser.performActions([
-      {
-        type: "pointer",
-        parameters: { pointerType: "mouse" },
-        actions: [
-          { type: "pointerMove", origin: "pointer", duration: 100, x: getButtonOstavitOtzyv.x, y: getButtonOstavitOtzyv.y},
-          { type: "pointerDown", origin: "pointer", button: 0 },
-          { type: "pointerUp", origin: "pointer", button: 0 },
-        ],
-      },
-    ]);
-    await browser.pause(3000);
-  });
-
   it("Should open Discuss on forum page", async () => {
     await productPage.clickOnButton("Обсуждение на форуме");
     await productPage.waitForElementDisplayed(productPage.forumMessagesFrame);
     expect(await productPage.forumMessagesFrame.isDisplayed()).to.equal(true);
+    await productPage.back();
   });
 
-  it("Should open Offers page", async () => {
-    await productPage.back();
-    await productPage.clickOnButton("Предложения продавцов");
-    await productPage.waitForElementDisplayed(productPage.offersListFrame);
-    expect(await productPage.offersListFrame.isDisplayed()).to.equal(true);
+  it("Should should open Offers page by using actionsPerform", async () => {
+    const getOffersButton = await $(".//span[text()='Предложения продавцов']");
+    browser.performActions([
+      {
+        type: "pointer",
+        id: 'finger1',
+        parameters: { pointerType: "mouse" },
+        actions: [
+          {
+            type: "pointerMove",
+            origin: "pointer",
+            origin: await getOffersButton,
+            x: 0,
+            y: 0,
+          },
+          { type: "pointerDown", button: 0 },
+          { type: "pointerUp", button: 0 },
+        ],
+      },
+    ]);
+    await productPage.waitForElementDisplayed(productPage.getProductTitleText("iPhone 14 Pro Max 256GB (космический черный)"));
+    expect(await productPage.getProductTitleText("iPhone 14 Pro Max 256GB (космический черный)").isDisplayed()).to.equal(true);
   });
 
   it("Should open Adverts page by using JSexecutor", async () => {
